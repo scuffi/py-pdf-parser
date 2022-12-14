@@ -45,6 +45,7 @@ def load(
     pdf_file: IO,
     pdf_file_path: Optional[str] = None,
     la_params: Optional[Dict] = None,
+    skip_empty: bool = True,
     **kwargs: Any,
 ) -> PDFDocument:
     """
@@ -81,10 +82,13 @@ def load(
                 ]
 
         if not elements:
-            logger.warning(
-                f"No elements detected on page {page.pageid}, skipping this page."
-            )
-            continue
+            if skip_empty:
+                logger.warning(
+                    f"No elements detected on page {page.pageid}, skipping this page."
+                )
+                continue
+        
+            elements = []
 
         pages[page.pageid] = Page(
             width=page.width, height=page.height, elements=elements
